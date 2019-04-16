@@ -62,7 +62,7 @@ class Actionssearchproductbykeyword
 	 */
 	function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		$error = 0; // Error counter
+		/*$error = 0; // Error counter
 		$myvalue = 'test'; // A result value
 
 		print_r($parameters);
@@ -84,6 +84,69 @@ class Actionssearchproductbykeyword
 		{
 			$this->errors[] = 'Error message';
 			return -1;
-		}
+		}*/
 	}
+
+    function formAddObjectLine ($parameters, &$object, &$action, $hookmanager)
+    {
+
+        global $db, $langs, $user, $conf, $inputalsopricewithtax;
+
+        $TContext = explode(':',$parameters['context']);
+
+        if (in_array('propalcard',$TContext) || in_array('ordercard',$TContext) || in_array('invoicecard',$TContext)
+            || in_array('supplier_proposalcard',$TContext) || in_array('ordersuppliercard',$TContext) || in_array('invoicesuppliercard',$TContext))
+        {
+            ?>
+            <script type="text/javascript">
+                var spk_object_type = '<?php echo $object->element ?>';
+                var spk_object_id = '<?php echo $object->id ?>';
+                var spk_fk_soc = '<?php echo $object->socid; ?>';
+            </script>
+            <?php
+
+            /*$colspan1 = 4;
+            $colspan2 = 4;
+            if (!empty($inputalsopricewithtax)) { $colspan1++; $colspan2++; }
+            if (!empty($conf->global->PRODUCT_USE_UNITS)) $colspan1++;
+            if (!empty($conf->margin->enabled))
+            {
+                $colspan1++;
+                if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan1++;
+                if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) $colspan1++;
+            }
+
+            $langs->load('searchproductbykeyword@searchproductbykeyword');
+            */?><!--
+
+            <tr class="liste_titre nodrag nodrop">
+                <td colspan="<?php /*echo $colspan1; */?>"><?php /*echo $langs->trans('SearchByKeyword') */?></td>
+                <td align="right"><?php /*echo $langs->trans('Qty'); */?></td>
+                <td align="center" colspan="<?php /*echo $colspan2; */?>">&nbsp;<?php /*if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) { echo $langs->trans('subtotal_title_to_add_under_title'); } */?></td>
+            </tr>
+            <tr class="pair">
+                <td colspan="<?php /*echo $colspan1; */?>">
+                    <div id="ProductList" spc-role="arbo-multiple">
+
+                    </div>
+                </td>
+                <td class="nobottom" align="right">
+                    <input id="qty_spk" type="text" value="1" size="5" class="flat" />
+                </td>
+                <td valign="middle" align="center" colspan="<?php /*echo $colspan2; */?>">
+                    <?php /*if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) {
+                        dol_include_once('/subtotal/class/subtotal.class.php');
+                        $TTitle = TSubtotal::getAllTitleFromDocument($object);
+                        echo getHtmlSelectTitle($object);
+                    } */?>
+                    <input id="addline_spk" class="button" type="button" name="addline_timesheet" value="<?php /*echo $langs->trans('Add') */?>">
+                </td>
+            </tr>
+
+            --><?php
+
+        }
+
+        return 0;
+    }
 }
