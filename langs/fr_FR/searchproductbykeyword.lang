@@ -47,3 +47,5 @@ ToClone=Cloner
 Delete=Supprimer
 
 SearchByKeyword=Recherche par mot clé
+NothingHere=Pas de produit
+SPK_DISPLAY_DESC_OF_PRODUCT=Afficher une icône qui contient le descriptif du produit sur chaque ligne de produit dans la liste

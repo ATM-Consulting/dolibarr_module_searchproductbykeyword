@@ -107,16 +107,20 @@ if(!function_exists('setup_print_title')){
     exit;
 }
 
-setup_print_title("Parameters");
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
 // Example with a yes / no select
-setup_print_on_off('CONSTNAME', 'ParamLabel' , 'ParamDesc');
+setup_print_on_off('SPK_DISPLAY_DESC_OF_PRODUCT');
 
 // Example with imput
-setup_print_input_form_part('CONSTNAME', 'ParamLabel');
+//setup_print_input_form_part('CONSTNAME', 'ParamLabel');
 
 // Example with color
-setup_print_input_form_part('CONSTNAME', 'ParamLabel', 'ParamDesc', array('type'=>'color'),'input','ParamHelp');
+//setup_print_input_form_part('CONSTNAME', 'ParamLabel', 'ParamDesc', array('type'=>'color'),'input','ParamHelp');
 
 // Example with placeholder
 //setup_print_input_form_part('CONSTNAME','ParamLabel','ParamDesc',array('placeholder'=>'http://'),'input','ParamHelp');

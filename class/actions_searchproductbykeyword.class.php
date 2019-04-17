@@ -97,16 +97,22 @@ class Actionssearchproductbykeyword
         if (in_array('propalcard',$TContext) || in_array('ordercard',$TContext) || in_array('invoicecard',$TContext)
             || in_array('supplier_proposalcard',$TContext) || in_array('ordersuppliercard',$TContext) || in_array('invoicesuppliercard',$TContext))
         {
+            $element = $object->element;
+            if ($element == 'order_supplier') $element = 'CommandeFournisseur';
+            if ($element == 'invoice_supplier') $element = 'FactureFournisseur';
+            if ($element == 'supplier_proposal') $element = 'SupplierProposal';
             ?>
             <script type="text/javascript">
-                var spk_object_type = '<?php echo $object->element ?>';
+                var spk_object_type = '<?php echo $element ?>';
                 var spk_object_id = '<?php echo $object->id ?>';
                 var spk_fk_soc = '<?php echo $object->socid; ?>';
             </script>
             <?php
 
-            /*$colspan1 = 4;
-            $colspan2 = 4;
+            $is_fourn = (in_array('supplier_proposalcard',$TContext) || in_array('ordersuppliercard',$TContext) || in_array('invoicesuppliercard',$TContext)) ? 1 : 0;
+
+            $colspan1 = 5;
+            $colspan2 = 5;
             if (!empty($inputalsopricewithtax)) { $colspan1++; $colspan2++; }
             if (!empty($conf->global->PRODUCT_USE_UNITS)) $colspan1++;
             if (!empty($conf->margin->enabled))
@@ -117,33 +123,33 @@ class Actionssearchproductbykeyword
             }
 
             $langs->load('searchproductbykeyword@searchproductbykeyword');
-            */?><!--
+            ?>
 
             <tr class="liste_titre nodrag nodrop">
-                <td colspan="<?php /*echo $colspan1; */?>"><?php /*echo $langs->trans('SearchByKeyword') */?></td>
-                <td align="right"><?php /*echo $langs->trans('Qty'); */?></td>
-                <td align="center" colspan="<?php /*echo $colspan2; */?>">&nbsp;<?php /*if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) { echo $langs->trans('subtotal_title_to_add_under_title'); } */?></td>
+                <td colspan="<?php echo $colspan1; ?>"><?php echo $langs->trans('SearchByKeyword') ?><input type="hidden" id="fourn" name="fourn" value="<?php echo $is_fourn; ?>"></td>
+<!--                <td align="right">--><?php //echo $langs->trans('Qty'); ?><!--</td>-->
+                <td align="center" colspan="<?php echo $colspan2; ?>">&nbsp;<?php if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) { echo $langs->trans('subtotal_title_to_add_under_title'); } ?></td>
             </tr>
             <tr class="pair">
-                <td colspan="<?php /*echo $colspan1; */?>">
-                    <div id="ProductList" spc-role="arbo-multiple">
+                <td colspan="<?php echo $colspan1; ?>">
+                    <div id="ProductList">
 
                     </div>
                 </td>
-                <td class="nobottom" align="right">
-                    <input id="qty_spk" type="text" value="1" size="5" class="flat" />
-                </td>
-                <td valign="middle" align="center" colspan="<?php /*echo $colspan2; */?>">
-                    <?php /*if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) {
+<!--                <td class="nobottom" align="right">-->
+<!--                    <input id="qty_spk" type="text" value="1" size="5" class="flat" />-->
+<!--                </td>-->
+                <td valign="middle" align="center" colspan="<?php echo $colspan2; ?>">
+                    <?php if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) {
                         dol_include_once('/subtotal/class/subtotal.class.php');
                         $TTitle = TSubtotal::getAllTitleFromDocument($object);
                         echo getHtmlSelectTitle($object);
-                    } */?>
-                    <input id="addline_spk" class="button" type="button" name="addline_timesheet" value="<?php /*echo $langs->trans('Add') */?>">
+                    } ?>
+                    <input id="addline_spk" class="button" type="button" name="addline_spk" value="<?php echo $langs->trans('Add') ?>">
                 </td>
             </tr>
 
-            --><?php
+            <?php
 
         }
 
