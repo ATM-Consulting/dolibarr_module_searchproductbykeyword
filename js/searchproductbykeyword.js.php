@@ -120,7 +120,7 @@ function getProducts(container, keyword) {
 
                 inputQty = '<input type="text" name="TProductSPKQty['+item.id+']" fk_product="'+item.id+'">';
 
-                $li = $('<li class="product '+spk_line_class+'" productid="'+item.id+'"> <table width="100%"><tr><td width="80%"><input type="checkbox" value="1" name="TProductSPKtoAdd['+item.id+']" fk_product="'+item.id+'" class="checkSPK" /> <a class="checkIt" href="javascript:;" onclick="checkProductSPK('+item.id+')" >'+item.label+'</a> '+TRadioboxMultiPrice+'</td><td width="20%">'+inputQty+'</td></tr></table></li>');
+                $li = $('<li class="product '+spk_line_class+'" productid="'+item.id+'"> <table width="100%"><tr><td width="80%"><input type="checkbox" value="1" name="TProductSPKtoAdd['+item.id+']" fk_product="'+item.id+'" class="checkSPK" /> <a class="checkIt" href="javascript:;" onclick="checkProductSPK('+item.id+')" >'+item.ref+' - '+item.label+'</a> '+TRadioboxMultiPrice+'</td><td width="20%">'+inputQty+'</td></tr></table></li>');
 
                 <?php if (!empty($conf->global->SPK_DISPLAY_DESC_OF_PRODUCT)) { ?>
                 var desc = item.description.replace(/'/g, "\\'");
