@@ -38,6 +38,7 @@ $(document).ready(function() {
                 ,TProductQty:TProductQty
 				,object_type:spk_object_type
 				,object_id:spk_object_id
+                ,fk_soc:spk_fk_soc
 				,qty:$('#qty_spk').val()
 				<?php if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) { ?>,under_title:$(this).closest('td').children('select.under_title').val()<?php } ?>
 			}

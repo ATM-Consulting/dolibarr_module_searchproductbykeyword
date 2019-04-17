@@ -53,6 +53,7 @@ switch ($put)
         $TProductPrice=GETPOST('TProductPrice');
         $TProductQty=GETPOST('TProductQty');
         $txtva=(float)GETPOST('txtva');
+        $fk_soc = GETPOST('fk_soc');
 
         if(!empty($TProduct)) {
             $o=new $object_type($db);
@@ -86,11 +87,19 @@ switch ($put)
                     $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product, 0, 0, 0, 'HT', 0, '', '', 0, -1, 0, 0, null, '', '',0, $p->fk_unit);
                 }elseif($object_type == 'FactureFournisseur')
                 {
-                    $res = $o->addline($p->description, 0, $txtva,0,0, $qty,$fk_product);
+                    $result = $p->get_buyprice(0, $qty, $fk_product, 'none', $fk_soc);
+                    if ($result > 0) $price = $p->fourn_pu;
+                    else $price = 0;
+
+                    $res = $o->addline($p->description, $price, $txtva,0,0, $qty,$fk_product);
                 }
-                else
+                else // propal et commande fourn
                 {
-                    $res = $o->addline($p->description, 0, $qty, $txtva,0,0,$fk_product);
+                    $result = $p->get_buyprice(0, $qty, $fk_product, 'none', $fk_soc);
+                    if ($result > 0) $price = $p->fourn_pu;
+                    else $price = 0;
+
+                    $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product);
                 }
 
             }
