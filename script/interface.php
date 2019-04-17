@@ -86,11 +86,11 @@ switch ($put)
                     $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product, 0, 0, 0, 'HT', 0, '', '', 0, -1, 0, 0, null, '', '',0, $p->fk_unit);
                 }elseif($object_type == 'FactureFournisseur')
                 {
-                    $res = $o->addline($p->description, $price, $txtva,0,0, $qty,$fk_product);
+                    $res = $o->addline($p->description, 0, $txtva,0,0, $qty,$fk_product);
                 }
                 else
                 {
-                    $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product);
+                    $res = $o->addline($p->description, 0, $qty, $txtva,0,0,$fk_product);
                 }
 
             }
