@@ -55,6 +55,11 @@ switch ($put)
         $txtva=(float)GETPOST('txtva');
         $fk_soc = GETPOST('fk_soc');
 
+        foreach ($TProductQty as $k => $val)
+        {
+            if (!empty($val) && is_numeric($val) && $val > 0 && !in_array($val,$TProduct)) $TProduct[] = $val;
+        }
+
         if(!empty($TProduct)) {
             $o=new $object_type($db);
             $o->fetch($object_id);
@@ -114,7 +119,10 @@ switch ($put)
 
 function _products($is_supplier=0, $keyword='')
 {
-    global $db, $conf, $langs;
+    global $db, $conf, $langs, $fk_soc;
+
+    dol_include_once('/core/class/html.form.class.php');
+    $form = new Form($db);
 
     if (empty($keyword)) return array();
 
@@ -145,20 +153,41 @@ function _products($is_supplier=0, $keyword='')
     $TProd = array();
     if (!empty($Tab))
     {
-        foreach($Tab as $prod){
-            if(empty($is_supplier) && $prod->status == 1) $TProd[] = $prod;
-            elseif(! empty($is_supplier) && $prod->status_buy == 1) $TProd[] = $prod;
-        }
-
-        if (!empty($conf->global->SPK_DISPLAY_DESC_OF_PRODUCT))
+        if (empty($is_supplier))
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-            foreach ($TProd as &$o) $o->description = dol_html_entity_decode($o->description, ENT_QUOTES);
+            foreach($Tab as $prod){
+                if(empty($is_supplier) && $prod->status == 1) $TProd[] = $prod;
+                elseif(! empty($is_supplier) && $prod->status_buy == 1) $TProd[] = $prod;
+            }
+
+            if (!empty($conf->global->SPK_DISPLAY_DESC_OF_PRODUCT))
+            {
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+                foreach ($TProd as &$o) $o->description = dol_html_entity_decode($o->description, ENT_QUOTES);
+            }
+            if(!empty($conf->global->PRODUCT_USE_UNITS)){
+                foreach ($TProd as &$o){
+                    $unit = $o->getLabelOfUnit();
+                    $o->unit = $langs->trans($unit);
+                }
+            }
         }
-        if(!empty($conf->global->PRODUCT_USE_UNITS)){
-            foreach ($TProd as &$o){
-                $unit = $o->getLabelOfUnit();
-                $o->unit = $langs->trans($unit);
+        else
+        {
+            $array = $form->select_produits_fournisseurs_list($fk_soc, "", "", "", "", "", "", 1, 50, 1);
+            foreach($Tab as $prod){
+                foreach ($array as $pfp)
+                {
+                    $prod->pfp = array();
+                    if ($pfp['value'] == $prod->ref)
+                    {
+                        $prod2 = clone $prod;
+                        $prod2->pfp = $pfp;
+                        $prod2->label = $pfp['label'];
+
+                        $TProd[] = $prod2;
+                    }
+                }
             }
         }
     }

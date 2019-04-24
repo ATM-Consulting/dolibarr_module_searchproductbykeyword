@@ -90,7 +90,7 @@ class Actionssearchproductbykeyword
     function formAddObjectLine ($parameters, &$object, &$action, $hookmanager)
     {
 
-        global $db, $langs, $user, $conf, $inputalsopricewithtax;
+        global $db, $langs, $user, $conf, $inputalsopricewithtax, $form;
 
         $TContext = explode(':',$parameters['context']);
 
@@ -150,7 +150,7 @@ class Actionssearchproductbykeyword
             </tr>
 
             <?php
-
+            //echo "<pre>"; print_r($form->select_produits_fournisseurs_list($object->socid, "", "", "", "", "", "", 1, 50, 1));
         }
 
         return 0;

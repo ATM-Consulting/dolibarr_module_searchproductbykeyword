@@ -55,6 +55,8 @@ $(document).ready(function() {
 		});
 		
 	});
+
+
 });
 
 function searchProduct(a) {
@@ -62,12 +64,12 @@ function searchProduct(a) {
     getProducts($("div#ProductList"), keyword);
 }
 
-function checkProductSPK(fk_product) {
-    if( $('input[name="TProductSPKtoAdd['+fk_product+']"]').is(':checked') ) {
-        $('input[name="TProductSPKtoAdd['+fk_product+']"]').prop('checked',false);
+function checkProductSPK(index) {
+    if( $('input[name="TProductSPKtoAdd['+index+']"]').is(':checked') ) {
+        $('input[name="TProductSPKtoAdd['+index+']"]').prop('checked',false);
     }
     else {
-        $('input[name="TProductSPKtoAdd['+fk_product+']"]').prop('checked',true);
+        $('input[name="TProductSPKtoAdd['+index+']"]').prop('checked',true);
     }
 
 }
@@ -100,6 +102,7 @@ function getProducts(container, keyword) {
             $head = $('<table width="100%"><tr><td width="80%"><?php echo $langs->trans("Label") ?></td><td width="20%"><?php echo $langs->trans("Qty") ?></td></tr></table>');
             $list.append($head);
             $.each(data.TProduct,function(i,item) {
+                console.log(item);
                 spk_line_class = (spk_line_class == 'even') ? 'odd' : 'even';
 
                 var TRadioboxMultiPrice = '';
@@ -113,14 +116,17 @@ function getProducts(container, keyword) {
 
                         var checked = false;
                         if (data.default_price_level == p) checked = true;
-                        TRadioboxMultiPrice += '<span class="multiprice"><input '+(checked ? "checked" : "")+' class="radioSPK" type="radio" name="TProductSPKPriceToAdd['+item.id+']" value="'+priceToUse+'" data-fk-product="'+item.id+'" style="vertical-align:bottom;" /> ' + priceToUse.toFixed(2) + '</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+                        TRadioboxMultiPrice += '<span class="multiprice"><input '+(checked ? "checked" : "")+' class="radioSPK" type="radio" name="TProductSPKPriceToAdd['+i+']" value="'+priceToUse+'" data-fk-product="'+item.id+'" style="vertical-align:bottom;" /> ' + priceToUse.toFixed(2) + '</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
                     }
                 }
                 <?php } ?>
 
-                inputQty = '<input type="text" name="TProductSPKQty['+item.id+']" fk_product="'+item.id+'">';
+                inputQty = '<input type="text" name="TProductSPKQty['+i+']" fk_product="'+item.id+'" data-index="'+i+'">';
 
-                $li = $('<li class="product '+spk_line_class+'" productid="'+item.id+'"> <table width="100%"><tr><td width="80%"><input type="checkbox" value="1" name="TProductSPKtoAdd['+item.id+']" fk_product="'+item.id+'" class="checkSPK" /> <a class="checkIt" href="javascript:;" onclick="checkProductSPK('+item.id+')" >'+item.ref+' - '+item.label+'</a> '+TRadioboxMultiPrice+'</td><td width="20%">'+inputQty+'</td></tr></table></li>');
+                var label = item.label;
+                console.log(item.pfp);
+
+                $li = $('<li class="product '+spk_line_class+'" productid="'+item.id+'"> <table width="100%"><tr><td width="80%"><input type="checkbox" value="1" name="TProductSPKtoAdd['+i+']" fk_product="'+item.id+'" class="checkSPK" style="display:none;"/> <!--<a class="checkIt" href="javascript:;" onclick="checkProductSPK('+i+')" >--><span>'+item.ref+' - '+label+'<!--</a>--> '+TRadioboxMultiPrice+'</td><td width="20%">'+inputQty+'</td></tr></table></li>');
 
                 <?php if (!empty($conf->global->SPK_DISPLAY_DESC_OF_PRODUCT)) { ?>
                 var desc = item.description.replace(/'/g, "\\'");
@@ -154,6 +160,24 @@ function initSearchProductByKeyword(selector) {
 	$arbo = $( selector );
 
 	$arbo.html();
-	$arbo.append('<div><input type="text" value="" name="spk_keyword" size="10" /> <a href="javascript:;" onclick="searchProduct(this)"><?php echo img_picto('','search'); ?></a></div>');
+	$arbo.append('<div><input type="text" value="" name="spk_keyword" id="spk_keyword" size="10" /> <a href="javascript:;" onclick="searchProduct(this)"><?php echo img_picto('','search'); ?></a></div>');
+
+	$('#spk_keyword').on('keydown', function(e){
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            $(this).next().click();
+        }
+    });
+
+    $('input[name^="TProductSPKQty["]').on('blur', function(e){
+        var val = $(this).val()
+        if (isNumeric(val) && val > 0)
+        {
+            var index = $(this).attr('data-index');
+            if( !$('input[name="TProductSPKtoAdd['+index+']"]').is(':checked') ) {
+                $('input[name="TProductSPKtoAdd['+index+']"]').prop('checked', true);
+            }
+        }
+    });
 
 }
