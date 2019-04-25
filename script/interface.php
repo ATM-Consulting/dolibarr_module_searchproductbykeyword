@@ -55,11 +55,6 @@ switch ($put)
         $txtva=(float)GETPOST('txtva');
         $fk_soc = GETPOST('fk_soc');
 
-        foreach ($TProductQty as $k => $val)
-        {
-            if (!empty($val) && is_numeric($val) && $val > 0 && !in_array($val,$TProduct)) $TProduct[] = $val;
-        }
-
         if(!empty($TProduct)) {
             $o=new $object_type($db);
             $o->fetch($object_id);
@@ -68,7 +63,7 @@ switch ($put)
                 $o->fetch_thirdparty();
             }
 
-            foreach($TProduct as $fk_product) {
+            foreach($TProduct as $k => $fk_product) {
                 $p=new Product($db);
                 $p->fetch($fk_product);
 
@@ -90,21 +85,47 @@ switch ($put)
                     $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product,0.0, 'HT', 0.0,0, 0, -1, 0,0, 0, '', '','', '',0, $p->fk_unit);
                 }elseif($object_type == 'commande'){
                     $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product, 0, 0, 0, 'HT', 0, '', '', 0, -1, 0, 0, null, '', '',0, $p->fk_unit);
-                }elseif($object_type == 'FactureFournisseur')
-                {
-                    $result = $p->get_buyprice(0, $qty, $fk_product, 'none', $fk_soc);
-                    if ($result > 0) $price = $p->fourn_pu;
-                    else $price = 0;
-
-                    $res = $o->addline($p->description, $price, $txtva,0,0, $qty,$fk_product);
                 }
-                else // propal et commande fourn
+                else
                 {
-                    $result = $p->get_buyprice(0, $qty, $fk_product, 'none', $fk_soc);
+                    /*$result = $p->get_buyprice(0, $qty, $fk_product, 'none', $fk_soc);
                     if ($result > 0) $price = $p->fourn_pu;
-                    else $price = 0;
+                    else $price = 0;*/
+                    $fournprice_id = $TProductPrice[$k];
+                    $sql = "SELECT pfp.ref_fourn, pfp.unitprice FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp WHERE rowid='".$fournprice_id."'";
+                    $resql = $db->query($sql);
+                    $ref_fourn = '';
+                    $price = 0;
+                    if ($resql)
+                    {
+                        if ($db->num_rows($resql))
+                        {
+                            $obj = $db->fetch_object($resql);
+                            $ref_fourn = $obj->ref_fourn;
+                            $price = $obj->unitprice;
+                        }
+                        else
+                        {
+                            $fournprice_id = 0;
+                        }
+                    }
+                    else
+                    {
+                        $fournprice_id = 0;
+                    }
 
-                    $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product);
+                    if($object_type == 'FactureFournisseur')
+                    {
+                        $res = $o->addline($p->description, $price, $txtva,0,0, $qty,$fk_product, 0, '', '', 0, '', 'HT', 0, -1, false, 0, null, 0, 0, $ref_fourn);
+                    }
+                    elseif ($object_type = 'CommandeFournisseur')
+                    {
+                        $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product, $fournprice_id, $ref_fourn);
+                    }
+                    else // SupplierProposal
+                    {
+                        $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product, 0, 'HT', 0, 0, 0, -1, 0, 0, $fournprice_id, $price, '', 0, $ref_fourn);
+                    }
                 }
 
             }

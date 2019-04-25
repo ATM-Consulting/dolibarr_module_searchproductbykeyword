@@ -15,13 +15,19 @@ $(document).ready(function() {
 		var TProduct={};
 		var TProductPrice={};
 		var TProductQty={};
-		
-		$('input.checkSPK:checked').each(function(i,item){
-			var fk_product = $(item).attr('fk_product');
-			TProduct[fk_product] = fk_product;
-            TProductQty[fk_product] = $('input[name="TProductSPKQty['+fk_product+']"]').val();
-		});
-		
+
+        $('input[name^="TProductSPKQty["]').each(function(i,item){
+            var fk_product = $(item).attr('fk_product');
+            var qty = $(item).val();
+            if ($.isNumeric(qty) && qty > 0)
+            {
+                if(parseFloat(qty) < parseFloat($(item).attr('data-min'))) qty = $(item).attr('data-min');
+                TProduct[i] = fk_product;
+                TProductQty[i] = qty;
+                if ($(item).attr('data-priceid') != undefined)  TProductPrice[i] = $(item).attr('data-priceid');
+            }
+        });
+
 		<?php if (!empty($conf->global->PRODUIT_MULTIPRICES)) { ?>
 		$('input.radioSPK:checked').each(function(i,item){
 			var priceToUse = $(item).val();
@@ -120,13 +126,17 @@ function getProducts(container, keyword) {
                     }
                 }
                 <?php } ?>
-
-                inputQty = '<input type="text" name="TProductSPKQty['+i+']" fk_product="'+item.id+'" data-index="'+i+'">';
+                var add_data = "";
+                if (item.pfp != undefined)
+                {
+                    add_data += 'data-priceid="'+item.pfp['key']+'"';
+                    add_data += 'data-min="'+item.pfp['qty']+'"';
+                }
+                inputQty = '<input type="number" name="TProductSPKQty['+i+']" fk_product="'+item.id+'" data-index="'+i+'" '+add_data+'>';
 
                 var label = item.label;
-                console.log(item.pfp);
 
-                $li = $('<li class="product '+spk_line_class+'" productid="'+item.id+'"> <table width="100%"><tr><td width="80%"><input type="checkbox" value="1" name="TProductSPKtoAdd['+i+']" fk_product="'+item.id+'" class="checkSPK" style="display:none;"/> <!--<a class="checkIt" href="javascript:;" onclick="checkProductSPK('+i+')" >--><span>'+item.ref+' - '+label+'<!--</a>--> '+TRadioboxMultiPrice+'</td><td width="20%">'+inputQty+'</td></tr></table></li>');
+                $li = $('<li class="product '+spk_line_class+'" productid="'+item.id+'"> <table width="100%"><tr><td width="80%">'+item.ref+' - '+label+' '+TRadioboxMultiPrice+'</td><td width="20%">'+inputQty+'</td></tr></table></li>');
 
                 <?php if (!empty($conf->global->SPK_DISPLAY_DESC_OF_PRODUCT)) { ?>
                 var desc = item.description.replace(/'/g, "\\'");
@@ -168,16 +178,4 @@ function initSearchProductByKeyword(selector) {
             $(this).next().click();
         }
     });
-
-    $('input[name^="TProductSPKQty["]').on('blur', function(e){
-        var val = $(this).val()
-        if (isNumeric(val) && val > 0)
-        {
-            var index = $(this).attr('data-index');
-            if( !$('input[name="TProductSPKtoAdd['+index+']"]').is(':checked') ) {
-                $('input[name="TProductSPKtoAdd['+index+']"]').prop('checked', true);
-            }
-        }
-    });
-
 }
