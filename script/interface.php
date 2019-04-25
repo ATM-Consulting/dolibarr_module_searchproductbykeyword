@@ -70,14 +70,14 @@ switch ($put)
                 $txtva = get_default_tva($mysoc, $o->thirdparty, $p->id);
 
                 $price = 0;
-                if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($TProductPrice[$fk_product])) {
-                    $price = price2num($TProductPrice[$fk_product]);
+                if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($TProductPrice[$k])) {
+                    $price = price2num($TProductPrice[$k]);
 
                     if (isset($p->multiprices_tva_tx[$o->thirdparty->price_level])) $txtva=$p->multiprices_tva_tx[$o->thirdparty->price_level];
                 }
                 if (empty($price)) $price = $p->price;
 
-                $qty = $TProductQty[$fk_product];
+                $qty = $TProductQty[$k];
 
                 if($object_type == 'facture'){
                     $res = $o->addline($p->description, $price, $qty, $txtva,0,0,$fk_product, 0, '', '', 0, 0, '', 'HT',0, Facture::TYPE_STANDARD, -1, 0, '',0, 0, null, '', '', 0, 100, '', $p->fk_unit , 0);
