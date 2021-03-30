@@ -1,4 +1,4 @@
-# CHANGELOG FOR XXXXXX MODULE
+# CHANGELOG FOR searchproductbykeyword MODULE
 
 ## Not Released
 
