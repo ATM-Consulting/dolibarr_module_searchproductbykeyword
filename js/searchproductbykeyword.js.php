@@ -1,16 +1,17 @@
 <?php
+if (!defined("NOCSRFCHECK")) define('NOCSRFCHECK', 1);
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1);
 
-    if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-	require '../config.php';
+require '../config.php';
 
-	$langs->load('searchproductbykeyword@searchproductbykeyword');
+$langs->load('searchproductbykeyword@searchproductbykeyword');
 
 ?>
 var spk_line_class = 'even';
 $(document).ready(function() {
 
     initSearchProductByKeyword("div#ProductList");
-	
+
 	$('#addline_spk').click(function() {
 		$(this).after('<span class="loading"><?php echo img_picto('', 'working.gif') ?></span>');
 		$(this).hide();
@@ -51,17 +52,17 @@ $(document).ready(function() {
 				<?php if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) { ?>,under_title:$(this).closest('td').children('select.under_title').val()<?php } ?>
 			}
 			,method:'post'
-			,dataType:'json'	
+			,dataType:'json'
 		}).done(function(data) {
-			
+
 			var url = window.location.href;
-			
+
 			url = url.replace(window.location.hash, "");
 			window.location.href=url;
-			
+
 			return;
 		});
-		
+
 	});
 
 
